@@ -1,0 +1,21 @@
+.app-container {
+    padding: 0px 0px;
+    display: grid;
+    min-height: 100dvh;
+    grid-template-rows: 0.2fr 1fr 0.2fr;
+}
+
+.app-container header {
+    background-color: #082D33;
+}
+
+.app-container main {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #182323;
+}
+
+.app-container footer {
+    background-color: #082D33;
+}
