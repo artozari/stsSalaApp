@@ -1,0 +1,64 @@
+<div>
+    <form class="formBusqueda" [formGroup]="searchForm" (ngSubmit)="onSubmit()">
+        <div class="busquedaManualContainer">
+            <div>
+                <h2>Buscar Por Rango de Fechas</h2>
+            </div>
+            <div>
+                <label for="mesa">Mesa:</label>
+                <select formControlName="mesa" id="mesa">
+                    <option value="">todas</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                </select>
+            </div>
+            <div>
+                <label for="fecha">Fecha De Inicio:</label>
+                <input type="date" id="fecha" formControlName="fecha">
+            </div>
+            <div>
+                <label for="fechaFin">Fecha De Fin:</label>
+                <input type="date" id="fechaFin" formControlName="fechaFin">
+            </div>
+            <div>
+                <label for="tiempo">Tiempo:</label>
+                <select formControlName="tiempo" id="tiempo">
+                    <option *ngFor="let option of tiempoOptions()" [value]="option.value">{{ option.label }}</option>
+                </select>
+                <button type="submit">Buscar</button>
+                <button type="button" class="btn-exportarGlobal" (click)="onExportar()">Exportar CSV</button>
+            </div>
+        </div>
+        <div class="busquedaRapidasContainer">
+            <div>
+                <h2>Buscar en dias previos</h2>
+            </div>
+            <div class="quick-search-buttons">
+                <a type="button" class="quick-search" (click)="onQuickSearch(1)">
+                    <img src="/day.svg" alt="file" class="icon">
+                </a>
+                <a type="button" class="quick-search" (click)="onQuickSearch(3)">
+                    <img src="/threeDays.svg" alt="file" class="icon">
+                </a>
+                <a type="button" class="quick-search" (click)="onQuickSearch(7)">
+                    <img src="/sevenDays.svg" alt="file" class="icon">
+                </a>
+                <a type="button" class="quick-search" (click)="onQuickSearch(15)">
+                    <img src="/fifteenDays.svg" alt="file" class="icon">
+                </a>
+                <a type="button" class="quick-search" (click)="onQuickSearch(30)">
+                    <img src="/thirtyDays.svg" alt="file" class="icon">
+                </a>
+                <a type="button" class="quick-search" (click)="onQuickSearch(90)">
+                    <img src="/ninetyDays.svg" alt="file" class="icon">
+                </a>
+                <a type="button" class="quick-search" (click)="onQuickSearch(365)">
+                    <img src="/year.svg" alt="file" class="icon">
+                </a>
+            </div>
+        </div>
+    </form>
+</div>

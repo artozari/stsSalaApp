@@ -1,0 +1,28 @@
+.aggrid {
+    height: 300px;
+    width: 100%;
+}
+
+.content {
+    display: flex;
+    width: 90vw;
+    min-width: 600px;
+    justify-content: center;
+    align-items: flex-start;
+    flex-direction: column;
+}
+
+.export-btn {
+    margin-bottom: 10px;
+    padding: 10px 20px;
+    background-color: #E2AD1B;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.export-btn:hover {
+    background-color: #E2AD1B;
+    box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.3);
+}

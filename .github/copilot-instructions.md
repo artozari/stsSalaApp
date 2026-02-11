@@ -1,56 +1,54 @@
+# Guía para agentes de codificación AI en StsSalaApp
 
-You are an expert in TypeScript, Angular, and scalable web application development. You write functional, maintainable, performant, and accessible code following Angular and TypeScript best practices.
+## Mejores prácticas de TypeScript
 
-## TypeScript Best Practices
+- Usa la verificación estricta de tipos (`strict` en `tsconfig.json`).
+- Prefiere la inferencia de tipos cuando el tipo sea obvio.
+- Evita el uso del tipo `any`; utiliza `unknown` si el tipo es incierto.
 
-- Use strict type checking
-- Prefer type inference when the type is obvious
-- Avoid the `any` type; use `unknown` when type is uncertain
+## Mejores prácticas de Angular
 
-## Angular Best Practices
+- Usa componentes independientes (standalone) en lugar de NgModules.
+- No configures `standalone: true` en los decoradores de Angular; es el valor predeterminado en Angular v20+.
+- Utiliza señales (`signals`) para la gestión del estado.
+- Implementa la carga diferida (lazy loading) para las rutas de características.
+- No uses los decoradores `@HostBinding` y `@HostListener`. En su lugar, utiliza el objeto `host` en los decoradores `@Component` o `@Directive`.
+- Usa `NgOptimizedImage` para todas las imágenes estáticas (no funciona con imágenes base64 inline).
 
-- Always use standalone components over NgModules
-- Must NOT set `standalone: true` inside Angular decorators. It's the default in Angular v20+.
-- Use signals for state management
-- Implement lazy loading for feature routes
-- Do NOT use the `@HostBinding` and `@HostListener` decorators. Put host bindings inside the `host` object of the `@Component` or `@Directive` decorator instead
-- Use `NgOptimizedImage` for all static images.
-  - `NgOptimizedImage` does not work for inline base64 images.
+## Requisitos de accesibilidad
 
-## Accessibility Requirements
+- Debe pasar todas las verificaciones de AXE.
+- Debe cumplir con los estándares mínimos de WCAG AA, incluyendo la gestión del enfoque, el contraste de color y los atributos ARIA.
 
-- It MUST pass all AXE checks.
-- It MUST follow all WCAG AA minimums, including focus management, color contrast, and ARIA attributes.
+### Componentes
 
-### Components
+- Mantén los componentes pequeños y enfocados en una única responsabilidad.
+- Usa funciones `input()` y `output()` en lugar de decoradores.
+- Usa `computed()` para estados derivados.
+- Configura `changeDetection: ChangeDetectionStrategy.OnPush` en el decorador `@Component`.
+- Prefiere plantillas en línea para componentes pequeños.
+- Prefiere formularios reactivos en lugar de formularios basados en plantillas.
+- No uses `ngClass`, utiliza enlaces de `class` en su lugar.
+- No uses `ngStyle`, utiliza enlaces de `style` en su lugar.
+- Cuando uses plantillas o estilos externos, utiliza rutas relativas al archivo TS del componente.
 
-- Keep components small and focused on a single responsibility
-- Use `input()` and `output()` functions instead of decorators
-- Use `computed()` for derived state
-- Set `changeDetection: ChangeDetectionStrategy.OnPush` in `@Component` decorator
-- Prefer inline templates for small components
-- Prefer Reactive forms instead of Template-driven ones
-- Do NOT use `ngClass`, use `class` bindings instead
-- Do NOT use `ngStyle`, use `style` bindings instead
-- When using external templates/styles, use paths relative to the component TS file.
+## Gestión del estado
 
-## State Management
+- Usa señales (`signals`) para el estado local de los componentes.
+- Usa `computed()` para estados derivados.
+- Mantén las transformaciones de estado puras y predecibles.
+- No uses `mutate` en señales; utiliza `update` o `set` en su lugar.
 
-- Use signals for local component state
-- Use `computed()` for derived state
-- Keep state transformations pure and predictable
-- Do NOT use `mutate` on signals, use `update` or `set` instead
+## Plantillas
 
-## Templates
+- Mantén las plantillas simples y evita la lógica compleja.
+- Usa control de flujo nativo (`@if`, `@for`, `@switch`) en lugar de `*ngIf`, `*ngFor`, `*ngSwitch`.
+- Usa el pipe `async` para manejar observables.
+- No asumas que los valores globales (como `new Date()`) están disponibles.
+- No escribas funciones flecha en las plantillas (no son compatibles).
 
-- Keep templates simple and avoid complex logic
-- Use native control flow (`@if`, `@for`, `@switch`) instead of `*ngIf`, `*ngFor`, `*ngSwitch`
-- Use the async pipe to handle observables
-- Do not assume globals like (`new Date()`) are available.
-- Do not write arrow functions in templates (they are not supported).
+## Servicios
 
-## Services
-
-- Design services around a single responsibility
-- Use the `providedIn: 'root'` option for singleton services
-- Use the `inject()` function instead of constructor injection
+- Diseña los servicios con una única responsabilidad.
+- Usa la opción `providedIn: 'root'` para servicios singleton.
+- Usa la función `inject()` en lugar de inyección en el constructor.

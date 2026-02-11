@@ -1,0 +1,31 @@
+* {
+  margin: 0;
+  padding: 0;
+  color: var(--text-color);
+}
+
+#chart-container {
+  justify-self: center;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.rose-container {
+  width: 300px;
+  height: 300px;
+  display: flex;
+  justify-items: center;
+  align-items: center;
+  position: absolute;
+  opacity: 0.5;
+  border-radius: 100%;
+  overflow: hidden;
+}
+
+img {
+  width: 50%;
+  height: 50%;
+  rotate: -40deg;
+  object-fit: cover;
+}

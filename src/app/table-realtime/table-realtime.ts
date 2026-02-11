@@ -1,17 +1,18 @@
-import { Component, signal } from '@angular/core';
-import { supabase } from '../supabase.client';
+import { Component, input, ViewChild } from '@angular/core';
 import { AgGridAngular } from 'ag-grid-angular';
-import type { ColDef } from 'ag-grid-community';
+import type { ColDef, GridOptions } from 'ag-grid-community';
 import {
   AllCommunityModule,
   ModuleRegistry,
+  CsvExportModule,
   themeQuartz,
   iconSetQuartzLight,
 } from 'ag-grid-community';
 
-ModuleRegistry.registerModules([AllCommunityModule]);
+ModuleRegistry.registerModules([AllCommunityModule, CsvExportModule]);
 
 interface IRow {
+  id: number;
   game_number: number;
   win_number: number;
   created_at: string;
@@ -26,104 +27,59 @@ interface IRow {
   standalone: true,
 })
 export class TableRealtime {
-  // Column Definitions: Defines the columns to be displayed.
-  public theme = themeQuartz.withPart(iconSetQuartzLight).withParams({
-    accentColor: '#00A2FF',
-    backgroundColor: '#21222C',
-    borderColor: '#429356',
-    borderRadius: 5,
-    browserColorScheme: 'dark',
-    cellHorizontalPaddingScale: 0.8,
-    cellTextColor: '#50F178',
-    columnBorder: false,
-    fontFamily: {
-      googleFont: 'IBM Plex Mono',
+  rowDataInput = input<IRow[]>([]);
+
+  @ViewChild(AgGridAngular) agGrid!: AgGridAngular;
+
+  colDefs: ColDef<IRow>[] = [
+    { field: 'id', sortable: true, filter: true, flex: 0.3 },
+
+    { field: 'game_number', sortable: true, filter: true, flex: 0.3 },
+    {
+      field: 'win_number',
+      sortable: true,
+      filter: true,
+      flex: 0.3,
+      cellStyle: { 'background-color': '#9a9a9a' },
     },
-    fontSize: 13,
-    foregroundColor: '#68FF8E',
-    headerBackgroundColor: '#18181F',
+    { field: 'created_at', sortable: true, filter: true, flex: 1 },
+    { field: 'updated_at', sortable: true, filter: true, flex: 1 },
+  ];
+
+  gridOptions: GridOptions = {};
+
+  theme = themeQuartz.withPart(iconSetQuartzLight).withParams({
+    backgroundColor: '#BBBBBB',
+    borderColor: '#000000A1',
+    borderRadius: '13.4px',
+    browserColorScheme: 'dark',
+    columnBorder: true,
+    fontFamily: ['Arial', 'sans-serif'],
     headerFontSize: 14,
-    headerFontWeight: 700,
     headerRowBorder: true,
-    headerTextColor: '#68FF8E',
-    headerVerticalPaddingScale: 1.5,
-    iconSize: 16,
-    oddRowBackgroundColor: '#21222C',
-    rangeSelectionBackgroundColor: '#FFFF0020',
-    rangeSelectionBorderColor: '#FFFF00',
-    rangeSelectionBorderStyle: 'dotted',
     rowBorder: true,
-    rowVerticalPaddingScale: 1.2,
-    sidePanelBorder: true,
     spacing: 4,
     wrapperBorder: true,
-    wrapperBorderRadius: 20,
+    wrapperBorderRadius: '17.8px',
   });
-
-  rowData: IRow[] = [];
-
-  // Column Definitions: Defines & controls grid columns.
-  colDefs: ColDef<IRow>[] = [];
-
-  games = signal<any[]>([]);
 
   constructor() {
     console.log('TableRealtime constructor called');
-    this.initializeGames();
-    this.getGames();
   }
 
-  private initializeGames(): void {
-    console.log('initializeGames called');
-    this.fetchGamesFromDatabase();
-  }
+  // Método para exportar los datos a CSV
+  exportToCsv() {
+    if (this.agGrid?.api) {
+      // Generar nombre de archivo con fecha actual y nombre de la tabla
+      const today = new Date().toISOString().split('T')[0]; // Formato YYYY-MM-DD
+      const fileName = `Tabla_general-${today}.csv`;
 
-  private async fetchGamesFromDatabase(): Promise<void> {
-    try {
-      const { data: game_table, error } = await supabase.from('game_table').select('*');
-      if (error) {
-        console.error('Error fetching initial games:', error);
-        return;
-      }
-      this.games.set(game_table);
-      this.rowData = game_table as IRow[];
-      this.colDefs = [
-        { field: 'game_number', sortable: true, filter: true },
-        { field: 'win_number', sortable: true, filter: true },
-        { field: 'created_at', sortable: true, filter: true },
-        { field: 'updated_at', sortable: true, filter: true },
-      ];
-    } catch (error) {
-      console.error('Error fetching initial games:', error);
+      this.agGrid.api.exportDataAsCsv({
+        fileName: fileName,
+        columnSeparator: ';', // Usar punto y coma como separador de columnas
+      });
+    } else {
+      console.error('Grid API no disponible para exportación');
     }
-  }
-
-  private getGames() {
-    // console.log('getGames called');
-    supabase
-      .channel('custom-all-channel')
-      .on(
-        'postgres_changes',
-        { event: '*', schema: 'public', table: 'game_table' },
-        async (payload) => {
-          console.log('Realtime update received', payload);
-          let { data, error } = await supabase.from('game_table').select('*');
-          if (error) {
-            console.error('Error fetching games:', error);
-            return;
-          }
-          if (data) {
-            this.games.set(data);
-          }
-        }
-      )
-      .subscribe();
-
-    // supabase
-    //   .channel('custom-all-channel')
-    //   .on('postgres_changes', { event: '*', schema: 'public', table: 'user_table' }, (payload) => {
-    //     console.log('Change received!', payload.new);
-    //   })
-    //   .subscribe();
   }
 }

@@ -1,0 +1,13 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
+#chart-containersBar {
+  /* width: 200px; */
+  /* height: 250px; */
+  justify-self: center;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+}
