@@ -1,0 +1,15 @@
+<div class="cards">
+    <div class="card">
+        <div class="columnOfCard">
+            <h3> {{ idTableSignal() | numeroMesaPipe }}</h3>
+            <app-rose [appRoseData]="appRoseData()" [tableID]="idTableSignal()"></app-rose>
+        </div>
+        <div class="columnOfCard">
+            <div class="card-description">
+                <p>Mayor: {{ mayorCantidad() | mayorCantidadPipe }}</p>
+                <p>Jugadas: {{ CantidadJugadas() }}</p>
+                <button class="btnDetalleMesa">detalles</button>
+            </div>
+        </div>
+    </div>
+</div>

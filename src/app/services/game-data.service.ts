@@ -29,6 +29,7 @@ export class GameDataService {
       query = query.eq('fk_table', searchData.mesa);
     }
 
+    console.log(query, 'aqui esta la QUERY');
     return await query;
   }
 

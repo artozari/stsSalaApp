@@ -3,20 +3,9 @@
         <app-header> </app-header>
     </header>
     <main>
+        <app-minidash [tablesIds]="tablesToShow()" [appRoseDataInput]="appsRosesDatas()"></app-minidash>
         <div class="cards-formsearch-container">
-            <div class="cards">
-                <div class="card">
-                    <app-rose [appRoseData]="appRoseData()" [tableID]="tableId()"></app-rose>
-                    <div class="card-description">
-                        <h3>Ruleta: {{ tableId() }}</h3>
-                        <p>Mayor: {{ mayorCantidad() | mayorCantidadPipe }}</p>
-                        <p>Jugadas: 200</p>
-                        <p>Ganadas: 30</p>
-                        <p>Perdidas: 170</p>
-                        <button class="btnDetalleMesa">detalles</button>
-                    </div>
-                </div>
-            </div>
+            <app-card-roulette [InputAppRoseData]="appRoseData()" [InputidTable]="tableId()"></app-card-roulette>
             <app-formsearch-main (searchSubmitted)="onSearchSubmitted($event)"></app-formsearch-main>
         </div>
         <app-table-realtime [rowDataInput]="tableData()"></app-table-realtime>

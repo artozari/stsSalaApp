@@ -17,6 +17,7 @@ interface IRow {
   win_number: number;
   created_at: string;
   updated_at: string;
+  fk_table: number;
 }
 
 @Component({
@@ -32,7 +33,7 @@ export class TableRealtime {
   @ViewChild(AgGridAngular) agGrid!: AgGridAngular;
 
   colDefs: ColDef<IRow>[] = [
-    { field: 'id', sortable: true, filter: true, flex: 0.3 },
+    { field: 'id', sortable: true, filter: true, flex: 0.3, sort: 'desc' },
 
     { field: 'game_number', sortable: true, filter: true, flex: 0.3 },
     {
@@ -42,6 +43,7 @@ export class TableRealtime {
       flex: 0.3,
       cellStyle: { 'background-color': '#9a9a9a' },
     },
+    { field: 'fk_table', sortable: true, filter: true, flex: 0.3, headerName: 'Table' },
     { field: 'created_at', sortable: true, filter: true, flex: 1 },
     { field: 'updated_at', sortable: true, filter: true, flex: 1 },
   ];

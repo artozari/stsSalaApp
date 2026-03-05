@@ -3,12 +3,11 @@ import { Header } from './header/header';
 import { TableRealtime } from './table-realtime/table-realtime';
 import { FormsearchMain } from './formsearch-main/formsearch-main';
 import { Footer } from './footer/footer';
-import { RoseComponent } from './rose/rose.component';
 import { obtenerPorsentajesDeNumerosIndividualesDesdeObjetos } from './utils/statCalculator';
 import { GameDataService } from './services/game-data.service';
 import { Switchdarktheme } from './switchdarktheme/switchdarktheme';
-import { MayorCantidadPipe } from './pipes/mayor-cantidad-pipe';
-import { PolarDataRuletaComponent } from './polar-data-ruleta/polar-data-ruleta.component';
+import { Minidash } from './minidash/minidash';
+import { CardRoulette } from './card-roulette/card-roulette';
 
 export interface IRow {
   id: number;
@@ -16,6 +15,7 @@ export interface IRow {
   win_number: number;
   created_at: string;
   updated_at: string;
+  fk_table: number;
 }
 
 interface IRoseData {
@@ -35,15 +35,7 @@ export interface ISearchData {
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [
-    Header,
-    TableRealtime,
-    FormsearchMain,
-    Footer,
-    RoseComponent,
-    Switchdarktheme,
-    MayorCantidadPipe,
-  ],
+  imports: [Header, TableRealtime, FormsearchMain, Footer, Switchdarktheme, Minidash, CardRoulette],
   templateUrl: './app.html',
   styleUrl: './app.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -56,6 +48,42 @@ export class App {
     namedata: [3, 5, 2, 3, 4, 2, 6, 8],
     dataSet: [3, 6, 4, 6, 7, 6, 4, 3],
   });
+  tablesToShow = signal<number[]>([3, 7]);
+  appsRosesDatas = signal<IRoseData[]>([
+    {
+      rose: {
+        cantidades: [
+          40, 30, 25, 10, 50, 70, 9, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+          0, 0, 0, 0, 0, 0, 0, 0, 0,
+        ],
+        porcentajes: [
+          0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+          0, 0, 0, 0, 0, 0, 0,
+        ],
+        ruleta: [
+          0, 26, 3, 35, 12, 28, 7, 29, 18, 22, 9, 31, 14, 20, 1, 33, 16, 24, 5, 10, 23, 8, 30, 11,
+          36, 13, 27, 6, 34, 17, 25, 2, 21, 4, 19, 15, 32,
+        ],
+      },
+    },
+    {
+      rose: {
+        cantidades: [
+          0, 0, 5, 0, 0, 0, 9, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 10, 0, 0, 30, 0, 0, 0, 0, 0, 0,
+          0, 0, 0, 0, 0, 0, 0, 0,
+        ],
+        porcentajes: [
+          0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+          0, 0, 0, 0, 0, 0, 0,
+        ],
+        ruleta: [
+          0, 26, 3, 35, 12, 28, 7, 29, 18, 22, 9, 31, 14, 20, 1, 33, 16, 24, 5, 10, 23, 8, 30, 11,
+          36, 13, 27, 6, 34, 17, 25, 2, 21, 4, 19, 15, 32,
+        ],
+      },
+    },
+  ]);
+
   tableId = signal(0);
   mayorCantidad = signal<number>(-1);
 

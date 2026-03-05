@@ -4,7 +4,9 @@
   color: var(--text-color);
 }
 
-#chart-container {
+.chart-container {
+  height: 300px;
+  width: 300px;
   justify-self: center;
   align-items: center;
   position: relative;
@@ -12,15 +14,8 @@
 }
 
 .rose-container {
-  width: 300px;
-  height: 300px;
-  display: flex;
-  justify-items: center;
-  align-items: center;
-  position: absolute;
-  opacity: 0.5;
-  border-radius: 100%;
-  overflow: hidden;
+  width: 250px;
+  height: 250px;
 }
 
 img {

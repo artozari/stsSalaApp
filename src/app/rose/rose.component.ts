@@ -1,4 +1,13 @@
-import { Component, OnInit, OnDestroy, input, effect, signal } from '@angular/core';
+import {
+  Component,
+  OnDestroy,
+  AfterViewInit,
+  ViewChild,
+  ElementRef,
+  input,
+  effect,
+  signal,
+} from '@angular/core';
 import * as echarts from 'echarts/core';
 import {
   TitleComponent,
@@ -91,10 +100,12 @@ interface RoseComponentOption extends EChartsOption {
   templateUrl: './rose.component.html',
   styleUrl: './rose.component.css',
 })
-export class RoseComponent implements OnInit, OnDestroy {
+export class RoseComponent implements AfterViewInit, OnDestroy {
   tableID = input<number>();
   appRoseData = input<any>();
 
+  @ViewChild('chartContainer', { static: true })
+  private readonly chartContainer!: ElementRef<HTMLDivElement>;
   private chart: echarts.ECharts | undefined;
 
   maxDefault: number = 0.1;
@@ -107,7 +118,7 @@ export class RoseComponent implements OnInit, OnDestroy {
       show: false,
     },
     title: {
-      show: true,
+      show: false,
       text: `Estadisticas de Sala ${this.tableID()}`,
     },
     legend: {
@@ -421,12 +432,12 @@ export class RoseComponent implements OnInit, OnDestroy {
     });
   }
 
-  ngOnInit(): void {
-    this.chart = echarts.init(
-      document.getElementById('chart-container') as HTMLDivElement,
-      'dark',
-      { renderer: 'canvas', useDirtyRect: true },
-    );
+  ngAfterViewInit(): void {
+    // use ViewChild reference rather than querying by ID
+    this.chart = echarts.init(this.chartContainer.nativeElement, 'dark', {
+      renderer: 'canvas',
+      useDirtyRect: true,
+    });
     this.chart.setOption(this.optionSignal());
   }
 
