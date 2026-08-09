@@ -17,20 +17,23 @@
 }
 
 .card {
-    height: 300px;
+    height: auto;
     display: flex;
     flex-direction: row;
     width: auto;
     gap: 5px;
+    padding: 10px;
     border-radius: 15px;
     backdrop-filter: blur(0.5px) saturate(100%);
-    background-color: rgba(17, 25, 40, 0.45);
+    background-color: rgba(17, 25, 40, 1);
     border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .columnOfCard {
+    width: 250px;
+    padding-left: 10px;
     display: flex;
-    align-items: center;
+    align-items: normal;
     justify-content: center;
     flex-direction: column;
 }
@@ -39,7 +42,7 @@
 .btnDetalleMesa {
     align-self: center;
     padding: 8px 16px;
-    margin: 10px 0 0 0;
+    margin: 3px 0 0 0;
     border: none;
     border-radius: 8px;
     background-color: var(--primary-color);
@@ -52,14 +55,25 @@ button:hover {
     background-color: var(--accent-color);
 }
 
+.card-description-container {
+    box-shadow: inset -5px 5px 20px rgba(0, 0, 0, 0.5), inset 5px -5px 10px rgba(110, 110, 110, 0.747);
+    border: 1px solid var(--primary-color);
+    padding: 0 10px 0 10px;
+    width: 230px;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    background-color: rgba(72, 90, 124, 0.85);
+}
+
 .card-description {
     height: auto;
-    width: 150px;
+    width: auto;
     color: var(--text-color);
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     justify-content: center;
     align-items: center;
+    gap: 5px;
 }
 
 .card-description p {
@@ -68,7 +82,7 @@ button:hover {
 
 
 h3 {
-    height: auto;
+    height: 47px;
     width: 100%;
     color: var(--text-color);
     display: flex;
@@ -76,5 +90,58 @@ h3 {
     justify-content: center;
     align-items: center;
     margin: 0px;
-    border-bottom: 1px solid var(--primary-color);
+    border-bottom: 3px solid var(--primary-color);
+}
+
+.statusGral {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+    width: auto;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 3px;
+    color: var(--text-color);
+    border-radius: 10px;
+    background-color: #66666677;
+}
+
+.statusOnline {
+    border-radius: 50%;
+    border: 1px solid var(--primary-color);
+    padding: 5px;
+    background-color: rgb(27, 255, 217);
+    color: var(--text-color);
+    animation: pulse 3s infinite;
+}
+
+.estatusOf {
+    border-radius: 50%;
+    border: 1px solid var(--primary-color);
+    padding: 5px;
+    background-color: rgba(247, 13, 13, 0.76);
+    color: var(--text-color);
+    animation: pulse 0.5s infinite;
+}
+
+.statusWaiting {
+    border-radius: 50%;
+    border: 1px solid var(--primary-color);
+    padding: 5px;
+    background-color: rgb(255, 230, 0);
+    color: var(--text-color);
+    animation: pulse 2s infinite;
+}
+
+
+@keyframes pulse {
+
+    0%,
+    100% {
+        opacity: 0.3;
+    }
+
+    50% {
+        opacity: 1;
+    }
 }

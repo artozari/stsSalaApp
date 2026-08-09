@@ -3,10 +3,13 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve --watch --host 10.0.0.173 --port=8080",
-    "build": "ng build",
-    "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "start": "node scripts/set-env.mjs && ng serve",
+    "dev": "node scripts/set-env.mjs && ng serve --watch --host 192.168.0.8 --port=8080 --inspect --watch=true",
+    "dev:debug": "node scripts/set-env.mjs && ng serve --configuration=development --host 10.0.0.232 --port=8080 --inspect --watch=true",
+    "buildProd": "node scripts/set-env.mjs && ng build --configuration production",
+    "watch": "node scripts/set-env.mjs && ng build --watch --configuration development",
+    "test": "ng test",
+    "build": "tsc"
   },
   "prettier": {
     "printWidth": 100,
@@ -33,6 +36,7 @@
     "ag-grid-angular": "^35.0.0",
     "ag-grid-enterprise": "^35.0.0",
     "echarts": "^6.0.0",
+    "mqtt": "^5.15.0",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0"
   },

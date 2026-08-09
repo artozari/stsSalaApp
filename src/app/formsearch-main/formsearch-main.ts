@@ -2,7 +2,9 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
+  effect,
   inject,
+  input,
   output,
   signal,
 } from '@angular/core';
@@ -34,13 +36,23 @@ export class FormsearchMain {
 
   // Output para emitir los datos de búsqueda al componente padre
   searchSubmitted = output<any>();
+  mesasDisponibles = input([{ value: 0, label: 'Mesa 0' }]);
+  mesaSeleccionada = input<number>(0);
 
   constructor() {
     this.searchForm = this.fb.group({
-      mesa: [''], // Agregado para el select de mesa
+      mesa: [''],
       fecha: [''],
       fechaFin: [''],
       tiempo: [30],
+    });
+
+    effect(() => {
+      const mesa = this.mesaSeleccionada();
+      if (mesa && mesa > 0) {
+        this.searchForm.get('mesa')?.setValue(mesa);
+        this.cdr.markForCheck();
+      }
     });
 
     this.searchForm.get('fechaFin')?.valueChanges.subscribe(() => {

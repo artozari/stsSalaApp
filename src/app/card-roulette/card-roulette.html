@@ -1,15 +1,53 @@
 <div class="cards">
     <div class="card">
         <div class="columnOfCard">
-            <h3> {{ idTableSignal() | numeroMesaPipe }}</h3>
-            <app-rose [appRoseData]="appRoseData()" [tableID]="idTableSignal()"></app-rose>
+            <h3> {{ this.idTableSignal() | numeroMesaPipe }}</h3>
+            <app-rose [appRoseData]="appRoseData()" [tableID]="appRoseData().mesa"></app-rose>
+            <app-vertical-bars-roulette [statName]="'Colo'" [statData]="this.varColors()">
+            </app-vertical-bars-roulette>
         </div>
         <div class="columnOfCard">
-            <div class="card-description">
-                <p>Mayor: {{ mayorCantidad() | mayorCantidadPipe }}</p>
-                <p>Jugadas: {{ CantidadJugadas() }}</p>
-                <button class="btnDetalleMesa">detalles</button>
+            <app-last-games [lastNumbers]="lastNumbers()"></app-last-games>
+            <div class="card-description-container">
+                <div class="card-description">
+                    <p>Mayor: {{ mayorCantidad() | mayorCantidadPipe }}</p>
+                    <p>Jugadas: {{ CantidadJugadas() }}</p>
+                </div>
+                <div class="card-description">
+                    Estado:
+                    <div class="statusGral">
+                        @switch (estado()) {
+                        @case ("green") {
+                        <div class="statusOnline"></div>Jugando
+                        }
+                        @case ("red") {
+                        <div class="estatusOf"></div>No Jugando
+                        }
+                        @case ("yellow") {
+                        <div class="statusWaiting"></div>Esperando
+                        }
+                        }
+                    </div>
+                </div>
+                <div class="card-description">
+                    <p>Tiempo desde jugada: {{ timeAfterLastGame() | milsegtotime }}</p>
+                </div>
             </div>
+            <!-- <app-horizontal-bars-roulette [statName]="'Colo'"
+                [statData]="this.varColors()"></app-horizontal-bars-roulette> -->
+            <app-horizontal-bars-roulette [statName]="'Col'"
+                [statData]="this.varColumns()"></app-horizontal-bars-roulette>
+            <app-horizontal-bars-roulette [statName]="'Doc'"
+                [statData]="this.varDocenas()"></app-horizontal-bars-roulette>
+            <app-horizontal-bars-roulette [statName]="'P/I'"
+                [statData]="this.varParImpar()"></app-horizontal-bars-roulette>
+            <app-horizontal-bars-roulette [statName]="'H/L'"
+                [statData]="this.varHighLow()"></app-horizontal-bars-roulette>
+
+
+            @if (showDetalles()) {
+            <button class="btnDetalleMesa" (click)="onDetalles()">Detalles</button>
+            }
         </div>
     </div>
 </div>

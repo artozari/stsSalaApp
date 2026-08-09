@@ -65,9 +65,7 @@ export class TableRealtime {
     wrapperBorderRadius: '17.8px',
   });
 
-  constructor() {
-    console.log('TableRealtime constructor called');
-  }
+  constructor() {}
 
   // Método para exportar los datos a CSV
   exportToCsv() {

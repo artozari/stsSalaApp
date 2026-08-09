@@ -5,24 +5,24 @@
     align-items: center;
     height: 100%;
     width: 100%;
-    /* border: 1px solid red; */
     border-radius: 20px;
 }
 
 .minidash-content {
     padding: 5px;
     display: flex;
+    flex-wrap: wrap;
     justify-content: center;
     align-items: center;
-    gap: 10px;
-    /* border: 1px solid blue; */
+    gap: 15px;
+
     border-radius: 15px;
 }
 
 .individualCardRoulette {
     padding: 10px;
     width: 300px;
-    height: 500px;
+    height: 600px;
     border-radius: 5px;
     /* border: 1px solid green; */
     background-color: var(--secondary-color);

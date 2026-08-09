@@ -5,6 +5,7 @@ import { Pipe, PipeTransform } from '@angular/core';
   standalone: true,
 })
 class NumeroMesaPipe implements PipeTransform {
+  
   transform(value: number): string {
     return value === 0 ? 'Todas las Mesas' : 'Mesa: ' + (value?.toString() ?? null);
   }

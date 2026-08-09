@@ -1,9 +1,19 @@
 type VectorData = number | string | boolean;
 type VectorArray = Array<VectorData>;
 type VectorDeVectores = Array<VectorArray>;
+
+export interface IRow {
+  id: number;
+  game_number: number;
+  win_number: number;
+  created_at: string;
+  updated_at: string;
+  fk_table: number;
+}
+
 export function calcularPorcentajeParesImpares(
   vectorDeVectores: VectorDeVectores,
-  j: number
+  j: number,
 ): {
   porcentajePares: number;
   porcentajeImpares: number;
@@ -30,9 +40,9 @@ export function calcularPorcentajeParesImpares(
     }
   }
 
-  const porcentajePares = Math.round((pares / total) * 100);
-  const porcentajeImpares = Math.round((impares / total) * 100);
-  const porcentajeCeros = Math.round((ceros / total) * 100);
+  const porcentajePares = total > 0 ? Math.round((pares / total) * 100) : 0;
+  const porcentajeImpares = total > 0 ? Math.round((impares / total) * 100) : 0;
+  const porcentajeCeros = total > 0 ? Math.round((ceros / total) * 100) : 0;
 
   return {
     porcentajePares,
@@ -59,7 +69,7 @@ export function calcularPorcentajeParesImpares(
 
 export function calcularPorcentajeRojosNegros(
   vectorDeVectores: VectorDeVectores,
-  j: number
+  j: number,
 ): {
   porcentajeRojos: number;
   porcentajeNegros: number;
@@ -92,9 +102,9 @@ export function calcularPorcentajeRojosNegros(
     }
   }
 
-  const porcentajeRojos = Math.round((rojos / total) * 100);
-  const porcentajeNegros = Math.round((negros / total) * 100);
-  const porcentajeVerdes = Math.round((verdes / total) * 100);
+  const porcentajeRojos = total > 0 ? Math.round((rojos / total) * 100) : 0;
+  const porcentajeNegros = total > 0 ? Math.round((negros / total) * 100) : 0;
+  const porcentajeVerdes = total > 0 ? Math.round((verdes / total) * 100) : 0;
 
   return {
     porcentajeRojos,
@@ -104,6 +114,11 @@ export function calcularPorcentajeRojosNegros(
     negros,
     verdes,
   };
+}
+
+export function RojosNegrosVerder(data: IRow[]) {
+  const vectorDeVectores: VectorDeVectores = data.map((row) => [row.win_number]);
+  return calcularPorcentajeRojosNegros(vectorDeVectores, 0);
 }
 
 /**
@@ -120,7 +135,7 @@ export function calcularPorcentajeRojosNegros(
  */
 export function calcularPorcentajeColumnas(
   vectorDeVectores: VectorDeVectores,
-  j: number
+  j: number,
 ): {
   porcentajePrimeraColumna: number;
   porcentajeSegundaColumna: number;
@@ -151,9 +166,9 @@ export function calcularPorcentajeColumnas(
     }
   }
 
-  const porcentajePrimeraColumna = Math.round((primeraColumna / total) * 100);
-  const porcentajeSegundaColumna = Math.round((segundaColumna / total) * 100);
-  const porcentajeTerceraColumna = Math.round((terceraColumna / total) * 100);
+  const porcentajePrimeraColumna = total > 0 ? Math.round((primeraColumna / total) * 100) : 0;
+  const porcentajeSegundaColumna = total > 0 ? Math.round((segundaColumna / total) * 100) : 0;
+  const porcentajeTerceraColumna = total > 0 ? Math.round((terceraColumna / total) * 100) : 0;
 
   return {
     porcentajePrimeraColumna,
@@ -180,7 +195,7 @@ export function calcularPorcentajeColumnas(
 
 export function calcularPorcentajeDocenas(
   vectorDeVectores: VectorDeVectores,
-  j: number
+  j: number,
 ): {
   porcentajePrimeraDocena: number;
   porcentajeSegundaDocena: number;
@@ -211,9 +226,9 @@ export function calcularPorcentajeDocenas(
     }
   }
 
-  const porcentajePrimeraDocena = Math.round((primeraDocena / total) * 100);
-  const porcentajeSegundaDocena = Math.round((segundaDocena / total) * 100);
-  const porcentajeTerceraDocena = Math.round((terceraDocena / total) * 100);
+  const porcentajePrimeraDocena = total > 0 ? Math.round((primeraDocena / total) * 100) : 0;
+  const porcentajeSegundaDocena = total > 0 ? Math.round((segundaDocena / total) * 100) : 0;
+  const porcentajeTerceraDocena = total > 0 ? Math.round((terceraDocena / total) * 100) : 0;
 
   return {
     porcentajePrimeraDocena,
@@ -239,7 +254,7 @@ export function calcularPorcentajeDocenas(
  */
 export function calcularPorcentajeAltosBajos(
   vectorDeVectores: VectorDeVectores,
-  j: number
+  j: number,
 ): {
   porcentajeAltos: number;
   porcentajeBajos: number;
@@ -266,8 +281,8 @@ export function calcularPorcentajeAltosBajos(
     }
   }
 
-  const porcentajeAltos = Math.round((altos / total) * 100);
-  const porcentajeBajos = Math.round((bajos / total) * 100);
+  const porcentajeAltos = total > 0 ? Math.round((altos / total) * 100) : 0;
+  const porcentajeBajos = total > 0 ? Math.round((bajos / total) * 100) : 0;
 
   return {
     porcentajeAltos,
@@ -288,7 +303,7 @@ export function calcularPorcentajeAltosBajos(
  */
 export function calcularNumerosMasYMenosFrecuentes(
   vectorDeVectores: VectorDeVectores,
-  j: number
+  j: number,
 ): { numerosMasFrecuentes: number[]; numerosMenosFrecuentes: number[] } {
   const frecuencias: { [key: number]: number } = {};
 
@@ -369,7 +384,7 @@ export function obtenerColor(numero: number): string {
 
 export function obtenerColoresNumeros(
   vectorDeVectores: VectorDeVectores,
-  j: number
+  j: number,
 ): { color: string[]; numero: number[] } {
   const numerosRojos = new Set([1, 3, 5, 7, 9, 12, 14, 16, 18, 19, 21, 23, 25, 27, 30, 32, 34, 36]);
   const numerosNegros = new Set([
@@ -456,17 +471,52 @@ export function obtenerPorsentajesDeNumerosIndividualesDesdeObjetos(
     win_number: number;
     created_at: string;
     updated_at: string;
-  }>
+    fk_table?: number;
+  }>,
 ): { cantidades: number[]; porcentajes: number[]; ruleta: number[] } {
   const ruleta = [
     0, 26, 3, 35, 12, 28, 7, 29, 18, 22, 9, 31, 14, 20, 1, 33, 16, 24, 5, 10, 23, 8, 30, 11, 36, 13,
     27, 6, 34, 17, 25, 2, 21, 4, 19, 15, 32,
   ];
-  const cantidades = new Array(37).fill(0);
-  const porcentajes = new Array(37).fill(0);
+  let cantidades = new Array(37).fill(0);
+  let porcentajes = new Array(37).fill(0);
 
   gameData.forEach((game) => {
     const winNumber = game.win_number;
+    if (winNumber >= 0 && winNumber <= 36) {
+      const index = ruleta.indexOf(winNumber);
+      if (index !== -1) {
+        cantidades[index]++;
+      }
+    }
+  });
+
+  const total = gameData.length;
+  if (total > 0) {
+    cantidades.forEach((count, index) => {
+      porcentajes[index] = (count / total) * 100;
+    });
+  }
+
+  return {
+    cantidades,
+    porcentajes,
+    ruleta,
+  };
+}
+
+export function obtenerPorsentajesDeNumerosIndividualesDesdeArray(
+  gameData: Array<Array<number | string | boolean>>,
+): { cantidades: number[]; porcentajes: number[]; ruleta: number[] } {
+  const ruleta = [
+    0, 26, 3, 35, 12, 28, 7, 29, 18, 22, 9, 31, 14, 20, 1, 33, 16, 24, 5, 10, 23, 8, 30, 11, 36, 13,
+    27, 6, 34, 17, 25, 2, 21, 4, 19, 15, 32,
+  ];
+  let cantidades = new Array(37).fill(0);
+  let porcentajes = new Array(37).fill(0);
+
+  gameData.forEach((game) => {
+    const winNumber = Number(game[3]);
     if (winNumber >= 0 && winNumber <= 36) {
       const index = ruleta.indexOf(winNumber);
       if (index !== -1) {

@@ -8,14 +8,9 @@
                 <label for="mesa">Mesa:</label>
                 <select formControlName="mesa" id="mesa">
                     <option value="">todas</option>
-                    <option value="1">1</option>
-                    <option value="2">2</option>
-                    <option value="3">3</option>
-                    <option value="4">4</option>
-                    <option value="5">5</option>
-                    <option value="8">8</option>
-                    <option value="15">15</option>
-
+                    <option *ngFor="let mesa of mesasDisponibles()" [value]="mesa?.value ?? mesa">
+                        {{ mesa?.label ?? mesa }}
+                    </option>
                 </select>
             </div>
             <div>

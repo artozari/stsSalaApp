@@ -15,7 +15,12 @@ export class GameDataService {
    * @returns Una promesa que se resuelve en el resultado de la consulta que contiene los registros del juego filtrados.
    */
   async fetchBatch(from: number, to: number, searchData: ISearchData) {
-    let query = supabase.from('game_table').select('*').range(from, to);
+    let query = supabase
+      .from('game_table')
+      .select('*')
+      .order('created_at', { ascending: true })
+      .order('id', { ascending: true })
+      .range(from, to);
 
     if (searchData.fecha) {
       const startDate = `${searchData.fecha} 00:00:00`;
@@ -29,10 +34,8 @@ export class GameDataService {
       query = query.eq('fk_table', searchData.mesa);
     }
 
-    console.log(query, 'aqui esta la QUERY');
     return await query;
   }
-
   /**
    * Procesa un lote de datos agregándolo a la colección allData y determinando si se esperan más lotes.
    * @param data - El lote de filas a procesar, o nulo si no hay datos disponibles

@@ -1,0 +1,49 @@
+.lastGameContainer {
+    width: 100%;
+    height: 25px;
+    border: 1px solid var(--primary-color);
+    border-radius: 5px;
+    display: flex;
+    justify-content: flex-end;
+    padding: 3px 0px;
+    margin: 5px 0px;
+    gap: 1px;
+}
+.numberRed{
+    background-color: red;
+    width: 10%;
+    height: 100%;
+    /* border: 1px solid var(--primary-color); */
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: var(--text-color);
+    box-shadow: inset 3px 0px 10px rgba(0,0,0,1);
+}
+
+.numberBlack {
+    background-color: rgb(54, 54, 54);
+    width: 10%;
+    height: 100%;
+    /* border: 1px solid var(--primary-color); */
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: var(--text-color);
+    box-shadow: inset 3px 3px 3px rgba(0, 0, 0, 1);
+}
+
+.numberGreen {
+    background-color: rgb(120, 216, 31);
+    width: 10%;
+    height: 100%;
+    /* border: 1px solid var(--primary-color); */
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: var(--text-color);
+    box-shadow: inset 1px 1px 5px rgba(0, 0, 0, 1);
+}

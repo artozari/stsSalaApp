@@ -1,5 +1,9 @@
-	html,
-	body {
-		margin: 0;
-		/* background-color: dimgray; */
-	}
+html,
+body {
+    margin: 0;
+    height: 100%;
+    overflow: hidden;
+    background-color: dimgray;
+    max-width: 100%;
+    overflow-x: hidden;
+}

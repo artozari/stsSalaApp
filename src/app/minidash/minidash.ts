@@ -1,7 +1,11 @@
-import { Component, signal, input, effect } from '@angular/core';
+import { Component, signal, input, output, effect } from '@angular/core';
 import { CardRoulette } from '../card-roulette/card-roulette';
 
 interface IRoseData {
+  mesa: number; // optional table number
+  ltengames: number[];
+  timeLastGame: number;
+  status: string | boolean;
   rose: {
     cantidades: number[];
     porcentajes: number[];
@@ -16,13 +20,16 @@ interface IRoseData {
   styleUrl: './minidash.css',
 })
 export class Minidash {
-  // cambia a un arreglo para almacenar múltiples ids de mesa si es necesario
-  tablesIds = input<number[]>();
   appRoseDataInput = input<IRoseData[]>();
+  computeDataInput = input<(number | string | boolean)[]>();
+  detallesClick = output<number>();
 
-  tableId = signal<number[]>([]);
   appRoseData = signal<IRoseData[]>([
     {
+      mesa: 0,
+      ltengames: [],
+      timeLastGame: 0,
+      status: '',
       rose: {
         cantidades: [
           0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -42,8 +49,6 @@ export class Minidash {
 
   constructor() {
     effect(() => {
-      const ids = this.tablesIds();
-      this.tableId.set(ids ? [...ids] : []);
       const data = this.appRoseDataInput();
       this.appRoseData.set(data || this.appRoseData());
     });

@@ -1,7 +1,8 @@
 <div class="minidash-container">
     <div class="minidash-content">
-        @for (id of tableId(); track id) {
-        <app-card-roulette [InputAppRoseData]="appRoseData()[$index]" [InputidTable]="id"></app-card-roulette>
+        @for (roseData of appRoseData(); track roseData.mesa) {
+        <app-card-roulette [InputAppRoseData]="roseData"
+            (detallesClick)="detallesClick.emit($event)"></app-card-roulette>
         }
     </div>
 </div>

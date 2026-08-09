@@ -1,0 +1,26 @@
+<div class="lastGameContainer">
+    @for (numero of lastNumbersSignal(); track numero) {
+        @switch (getNumberColor(numero)) {
+            @case ('black') {
+                <div class="numberBlack">
+                    {{ numero }}
+                </div>
+            }
+            @case ('red') {
+                <div class="numberRed">
+                    {{ numero }}
+                </div>
+            }
+            @case ('green') {
+                <div class="numberGreen">
+                    {{ numero }}
+                </div>
+            }
+            @default {
+                <div class="numberTransparent">
+                    {{ numero }}
+                </div>
+            }
+        }
+    }
+</div>

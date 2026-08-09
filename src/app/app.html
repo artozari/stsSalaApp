@@ -3,12 +3,22 @@
         <app-header> </app-header>
     </header>
     <main>
-        <app-minidash [tablesIds]="tablesToShow()" [appRoseDataInput]="appsRosesDatas()"></app-minidash>
         <div class="cards-formsearch-container">
-            <app-card-roulette [InputAppRoseData]="appRoseData()" [InputidTable]="tableId()"></app-card-roulette>
-            <app-formsearch-main (searchSubmitted)="onSearchSubmitted($event)"></app-formsearch-main>
+            <app-minidash [appRoseDataInput]="appsRosesDatas()" (detallesClick)="onDetallesMesa($event)"></app-minidash>
         </div>
+        <div class="cards-formsearch-container">
+            <app-card-roulette [InputAppRoseData]="appRoseData()" [showDetalles]="false"></app-card-roulette>
+            <app-formsearch-main [mesasDisponibles]="mesasDisponibles()" [mesaSeleccionada]="mesaSeleccionada()"
+                (searchSubmitted)="onSearchSubmitted($event)"></app-formsearch-main>
+        </div>
+        <section class="last-winners" aria-live="polite">
+        </section>
         <app-table-realtime [rowDataInput]="tableData()"></app-table-realtime>
+        <div
+            style=" display: flex; flex-direction: row; justify-content: center; align-items: center; flex-wrap: nowrap; gap: 20px; margin-top: 20px;">
+            <app-tapete-totales [rowTotalsTapeteInput]="rowTotalsTapete()"></app-tapete-totales>
+            <app-numerosganadores [rowNumerosGanadoresInput]="rowNumerosGanadores()"></app-numerosganadores>
+        </div>
         <app-switchdarktheme></app-switchdarktheme>
     </main>
     <footer>

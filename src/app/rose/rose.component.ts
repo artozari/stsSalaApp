@@ -7,92 +7,26 @@ import {
   input,
   effect,
   signal,
+  untracked,
 } from '@angular/core';
 import * as echarts from 'echarts/core';
 import {
   TitleComponent,
-  TitleComponentOption,
   TooltipComponent,
-  TooltipComponentOption,
   LegendComponent,
-  LegendComponentOption,
+  ToolboxComponent,
 } from 'echarts/components';
-import { RadarChart, RadarSeriesOption } from 'echarts/charts';
+import { RadarChart } from 'echarts/charts';
 import { CanvasRenderer } from 'echarts/renderers';
 
-echarts.use([TitleComponent, TooltipComponent, LegendComponent, RadarChart, CanvasRenderer]);
-
-type EChartsOption = echarts.ComposeOption<
-  TitleComponentOption | TooltipComponentOption | LegendComponentOption | RadarSeriesOption
->;
-
-interface RoseComponentOption extends EChartsOption {
-  rose: {
-    backgroundColor: string;
-    tooltip: {
-      trigger: 'item';
-      show: boolean;
-    };
-    title: {
-      text: string;
-    };
-    legend: {
-      data: string[];
-      left: string;
-    };
-    toolbox: {
-      show: boolean;
-      feature: {
-        dataView: {
-          readOnly: boolean;
-        };
-        restore: {};
-        saveAsImage: {};
-      };
-    };
-    radar: {
-      indicator: {
-        name: string;
-        color: string;
-        min: number;
-        max: number;
-      }[];
-      center: string[];
-      shape: string;
-      splitNumber: number;
-      axisName: {
-        color: string;
-      };
-      splitLine: {
-        lineStyle: {
-          color: string[];
-          width: number;
-        };
-      };
-      splitArea: {
-        show: boolean;
-      };
-      axisLine: {
-        lineStyle: {
-          color: string;
-          width: number;
-        };
-      };
-    };
-    series: {
-      name: string;
-      type: string;
-      areaStyle: {
-        color: string;
-        opacity: number;
-      };
-      data: {
-        value: number[];
-        name: string;
-      }[];
-    }[];
-  };
-}
+echarts.use([
+  TitleComponent,
+  TooltipComponent,
+  LegendComponent,
+  ToolboxComponent,
+  RadarChart,
+  CanvasRenderer,
+]);
 
 @Component({
   selector: 'app-rose',
@@ -359,6 +293,7 @@ export class RoseComponent implements AfterViewInit, OnDestroy {
         },
       ],
       center: ['50%', '50%'],
+      radius: '70%',
       shape: 'circle', //para que sea circular
       splitNumber: 5,
       axisName: {
@@ -405,39 +340,28 @@ export class RoseComponent implements AfterViewInit, OnDestroy {
   constructor() {
     effect(() => {
       const data = this.appRoseData();
-      console.log('Effect ejecutado con datos:', data);
       if (data) {
         let newMax = 1;
         if (Math.max(...data.rose.cantidades) > 0) {
           newMax = Math.max(...data.rose.cantidades);
-          console.log('new max: ', newMax);
         }
-        this.optionSignal.update((option) => {
-          option.radar.indicator.forEach((indicator: any) => {
-            indicator.max = newMax;
-          });
-          option.series[0].data[0].value = data.rose.cantidades;
-          option.title.text =
-            this.tableID()! > 0 ? `Estadisticas de Mesa ${this.tableID()}` : `Estadisticas de Sala`;
-          return { ...option };
+        const option = untracked(() => this.optionSignal());
+        option.radar.indicator.forEach((indicator: any) => {
+          indicator.max = newMax;
         });
-        console.log('Nueva opción:', this.optionSignal().series[0].data[0].value);
+        option.series[0].data[0].value = data.rose.cantidades;
+        option.title.text =
+          this.tableID()! > 0 ? `Estadisticas de Mesa ${this.tableID()}` : `Estadisticas de Sala`;
+        this.optionSignal.set({ ...option });
         if (this.chart) {
-          this.chart.setOption(this.optionSignal());
-          console.log('Gráfica actualizada');
-        } else {
-          console.log('Chart no inicializado aún');
+          this.chart.setOption(option);
         }
       }
     });
   }
 
   ngAfterViewInit(): void {
-    // use ViewChild reference rather than querying by ID
-    this.chart = echarts.init(this.chartContainer.nativeElement, 'dark', {
-      renderer: 'canvas',
-      useDirtyRect: true,
-    });
+    this.chart = echarts.init(this.chartContainer.nativeElement, 'dark');
     this.chart.setOption(this.optionSignal());
   }
 
@@ -447,11 +371,11 @@ export class RoseComponent implements AfterViewInit, OnDestroy {
     }
   }
 
-  datos() {
-    if (this.optionSignal().series[0].data[0].value) {
-      if (this.chart) {
-        this.chart.setOption(this.optionSignal());
-      }
-    }
-  }
+  // datos() {
+  //   if (this.optionSignal().series[0].data[0].value) {
+  //     if (this.chart) {
+  //       this.chart.setOption(this.optionSignal());
+  //     }
+  //   }
+  // }
 }
