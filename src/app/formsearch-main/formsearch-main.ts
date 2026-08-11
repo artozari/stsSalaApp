@@ -87,7 +87,7 @@ export class FormsearchMain {
     const today = new Date();
     const startDate = new Date(today);
     startDate.setDate(today.getDate() - days + 1);
-    const formattedStartDate = startDate.toISOString().split('T')[0];
+    const formattedStartDate = startDate.toLocaleDateString('en-CA');
     this.searchForm.get('fecha')?.setValue(formattedStartDate);
     this.searchForm.get('tiempo')?.setValue(days);
     this.onSubmit();

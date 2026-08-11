@@ -44,8 +44,8 @@ export class TableRealtime {
       cellStyle: { 'background-color': '#9a9a9a' },
     },
     { field: 'fk_table', sortable: true, filter: true, flex: 0.3, headerName: 'Table' },
-    { field: 'created_at', sortable: true, filter: true, flex: 1 },
-    { field: 'updated_at', sortable: true, filter: true, flex: 1 },
+    { field: 'created_at', sortable: true, filter: true, flex: 1, valueFormatter: this.formatLocalTime },
+    { field: 'updated_at', sortable: true, filter: true, flex: 1, valueFormatter: this.formatLocalTime },
   ];
 
   gridOptions: GridOptions = {};
@@ -66,6 +66,17 @@ export class TableRealtime {
   });
 
   constructor() {}
+
+  private formatLocalTime(params: any): string {
+    if (!params?.value) {
+      return params?.value ?? '';
+    }
+    const utcDate = new Date(`${params.value}Z`);
+    if (Number.isNaN(utcDate.getTime())) {
+      return params.value;
+    }
+    return utcDate.toLocaleString(undefined, { hour12: false });
+  }
 
   // Método para exportar los datos a CSV
   exportToCsv() {

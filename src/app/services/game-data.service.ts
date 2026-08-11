@@ -23,11 +23,13 @@ export class GameDataService {
       .range(from, to);
 
     if (searchData.fecha) {
-      const startDate = `${searchData.fecha} 00:00:00`;
+      const startLocal = new Date(`${searchData.fecha}T00:00:00`);
+      const startDate = startLocal.toISOString().slice(0, 19).replace('T', ' ');
       query = query.gte('created_at', startDate);
     }
     if (searchData.fechaFin) {
-      const endDate = `${searchData.fechaFin} 23:59:59`;
+      const endLocal = new Date(`${searchData.fechaFin}T23:59:59.999`);
+      const endDate = endLocal.toISOString().slice(0, 19).replace('T', ' ');
       query = query.lte('created_at', endDate);
     }
     if (searchData.mesa) {

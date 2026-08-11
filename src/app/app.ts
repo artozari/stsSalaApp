@@ -405,20 +405,14 @@ export class App implements OnInit {
 
   timeAfterLastGame(data: IRow[]): number {
     const lastGame = data.at(-1)?.created_at;
-    const threeHoursInMs = 3 * 60 * 60 * 1000;
-    const timezoneOffsetMs = new Date().getTimezoneOffset() * 60000;
-    const lastGameDate = lastGame
-      ? new Date(lastGame).getTime() - timezoneOffsetMs - threeHoursInMs
-      : 0;
+    const lastGameDate = lastGame ? new Date(`${lastGame}Z`).getTime() : 0;
     const now = Date.now();
     return lastGameDate ? Math.floor(now - lastGameDate) : -1;
   }
 
   timeAfterLastGameDashboard(data: IRow[]): number {
     const lastGame = data.at(-1)?.created_at;
-    const threeHoursInMs = 3 * 60 * 60 * 1000;
-    const timezoneOffsetMs = new Date().getTimezoneOffset() * 60000;
-    const lastGameDate = lastGame ? new Date(lastGame).getTime() - timezoneOffsetMs : 0;
+    const lastGameDate = lastGame ? new Date(`${lastGame}Z`).getTime() : 0;
     const now = Date.now();
     return lastGameDate ? Math.floor(now - lastGameDate) : -1;
   }
