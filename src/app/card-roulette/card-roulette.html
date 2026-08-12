@@ -13,6 +13,7 @@
                     <p>Mayor: {{ mayorCantidad() | mayorCantidadPipe }}</p>
                     <p>Jugadas: {{ CantidadJugadas() }}</p>
                 </div>
+                @if (showStatus()) {
                 <div class="card-description">
                     Estado:
                     <div class="statusGral">
@@ -29,6 +30,7 @@
                         }
                     </div>
                 </div>
+                }
                 <div class="card-description">
                     <p>Tiempo desde jugada: {{ timeAfterLastGame() | milsegtotime }}</p>
                 </div>

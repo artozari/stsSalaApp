@@ -7,9 +7,12 @@
             <app-minidash [appRoseDataInput]="appsRosesDatas()" (detallesClick)="onDetallesMesa($event)"></app-minidash>
         </div>
         <div class="cards-formsearch-container">
-            <app-card-roulette [InputAppRoseData]="appRoseData()" [showDetalles]="false"></app-card-roulette>
-            <app-formsearch-main [mesasDisponibles]="mesasDisponibles()" [mesaSeleccionada]="mesaSeleccionada()"
-                (searchSubmitted)="onSearchSubmitted($event)"></app-formsearch-main>
+            <app-card-roulette [InputAppRoseData]="appRoseData()" [showDetalles]="false"
+                [showStatus]="false"></app-card-roulette>
+            <app-formsearch-main [mesasDisponibles]="mesasDisponibles()"
+                [casinosDisponibles]="casinosDisponibles()" [mesaSeleccionada]="mesaSeleccionada()"
+                (searchSubmitted)="onSearchSubmitted($event)"
+                (casinoChange)="onCasinoChange($event)"></app-formsearch-main>
         </div>
         <section class="last-winners" aria-live="polite">
         </section>

@@ -33,19 +33,27 @@ export class TableRealtime {
   @ViewChild(AgGridAngular) agGrid!: AgGridAngular;
 
   colDefs: ColDef<IRow>[] = [
-    { field: 'id', sortable: true, filter: true, flex: 0.3, sort: 'desc' },
+    { field: 'id', headerName: 'ID', sortable: true, filter: true, flex: 0.3, sort: 'desc' },
 
-    { field: 'game_number', sortable: true, filter: true, flex: 0.3 },
+    { field: 'game_number', headerName: 'N° de Juego', sortable: true, filter: true, flex: 0.3 },
     {
       field: 'win_number',
+      headerName: 'Número Ganador',
       sortable: true,
       filter: true,
       flex: 0.3,
       cellStyle: { 'background-color': '#9a9a9a' },
     },
-    { field: 'fk_table', sortable: true, filter: true, flex: 0.3, headerName: 'Table' },
-    { field: 'created_at', sortable: true, filter: true, flex: 1, valueFormatter: this.formatLocalTime },
-    { field: 'updated_at', sortable: true, filter: true, flex: 1, valueFormatter: this.formatLocalTime },
+    { field: 'fk_table', headerName: 'Mesa', sortable: true, filter: true, flex: 0.3 },
+    {
+      field: 'created_at',
+      headerName: 'Fecha de Juego',
+      sortable: true,
+      filter: true,
+      flex: 1,
+      valueFormatter: this.formatLocalTime,
+    },
+    // { field: 'updated_at', sortable: true, filter: true, flex: 1, valueFormatter: this.formatLocalTime },
   ];
 
   gridOptions: GridOptions = {};

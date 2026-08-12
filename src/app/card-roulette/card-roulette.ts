@@ -80,6 +80,7 @@ export class CardRoulette {
 
   InputAppRoseData = input<IRoseData>();
   showDetalles = input<boolean>(true);
+  showStatus = input<boolean>(true);
   detallesClick = output<number>();
 
   onDetalles() {

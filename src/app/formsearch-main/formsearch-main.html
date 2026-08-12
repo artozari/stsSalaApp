@@ -5,10 +5,19 @@
                 <h2>Buscar Por Rango de Fechas</h2>
             </div>
             <div>
+                <label for="casino">Casino:</label>
+                <select formControlName="casino" id="casino">
+                    <option value="">todos</option>
+                    <option *ngFor="let casino of casinosDisponibles()" [ngValue]="casino.value">
+                        {{ casino.label }}
+                    </option>
+                </select>
+            </div>
+            <div>
                 <label for="mesa">Mesa:</label>
                 <select formControlName="mesa" id="mesa">
                     <option value="">todas</option>
-                    <option *ngFor="let mesa of mesasDisponibles()" [value]="mesa?.value ?? mesa">
+                    <option *ngFor="let mesa of mesasDisponibles()" [ngValue]="mesa?.value ?? mesa">
                         {{ mesa?.label ?? mesa }}
                     </option>
                 </select>

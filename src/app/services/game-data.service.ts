@@ -33,7 +33,10 @@ export class GameDataService {
       query = query.lte('created_at', endDate);
     }
     if (searchData.mesa) {
-      query = query.eq('fk_table', searchData.mesa);
+      query = query.eq('fk_table', Number(searchData.mesa));
+    }
+    if (searchData.tableIds && searchData.tableIds.length > 0) {
+      query = query.in('fk_table', searchData.tableIds);
     }
 
     return await query;

@@ -36,11 +36,14 @@ export class FormsearchMain {
 
   // Output para emitir los datos de búsqueda al componente padre
   searchSubmitted = output<any>();
+  casinoChange = output<number | ''>();
   mesasDisponibles = input([{ value: 0, label: 'Mesa 0' }]);
+  casinosDisponibles = input<{ value: number; label: string }[]>([]);
   mesaSeleccionada = input<number>(0);
 
   constructor() {
     this.searchForm = this.fb.group({
+      casino: [''],
       mesa: [''],
       fecha: [''],
       fechaFin: [''],
@@ -53,6 +56,20 @@ export class FormsearchMain {
         this.searchForm.get('mesa')?.setValue(mesa);
         this.cdr.markForCheck();
       }
+    });
+
+    effect(() => {
+      const mesas = this.mesasDisponibles();
+      const current = this.searchForm.get('mesa')?.value;
+      if (current && !mesas.some((mesa) => mesa?.value === current)) {
+        this.searchForm.get('mesa')?.setValue('');
+        this.cdr.markForCheck();
+      }
+    });
+
+    this.searchForm.get('casino')?.valueChanges.subscribe((casino: number | '') => {
+      this.casinoChange.emit(casino);
+      this.cdr.markForCheck();
     });
 
     this.searchForm.get('fechaFin')?.valueChanges.subscribe(() => {

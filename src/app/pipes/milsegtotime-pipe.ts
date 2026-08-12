@@ -8,14 +8,10 @@ export class MilsegtotimePipe implements PipeTransform {
     if (value === -1) {
       return 'No establecido';
     }
-    // Obtener offset de zona horaria local en milisegundos
-    const timezoneOffsetMs = new Date().getTimezoneOffset() * 60000;
-
     const milliseconds = value;
-    const seconds = Math.floor((milliseconds - timezoneOffsetMs) / 1000);
-    const minutes = Math.floor(seconds / 60);
-    const hours = Math.floor(minutes / 60);
-    const remainingMinutes = minutes % 60;
+    const seconds = Math.floor(milliseconds / 1000);
+    const hours = Math.floor(seconds / 3600);
+    const remainingMinutes = Math.floor((seconds % 3600) / 60);
     const remainingSeconds = seconds % 60;
     return `${hours}:${remainingMinutes < 10 ? '0' : ''}${remainingMinutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`;
   }
