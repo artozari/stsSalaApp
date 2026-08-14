@@ -116,9 +116,4 @@ export class FormsearchMain {
       this.cdr.markForCheck(); // Forzar change detection si es necesario
     }
   }
-
-  onExportar() {
-    console.log('Exportar CSV');
-    // Lógica para exportar
-  }
 }

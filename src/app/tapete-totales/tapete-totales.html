@@ -1,5 +1,5 @@
 <div class="content">
-    <h3 class="table-title">Totales del tapete</h3>
+    <h3 class="table-title">Totales en el paño</h3>
     <ag-grid-angular class="aggrid" [theme]="theme" [pagination]="false" (gridSizeChanged)="onGridSizeChanged($event)"
         [rowData]="rowTotalsTapeteInput()" [columnDefs]="colDefs" [gridOptions]="gridOptions" />
     <button (click)="exportToCsv()" class="export-btn">Exportar a CSV</button>

@@ -1,11 +1,27 @@
 .minidash-container {
     justify-self: center;
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
+    gap: 10px;
+    width: auto;
     height: 100%;
-    width: 100%;
-    border-radius: 20px;
+    padding: 10px;
+    border: 1px solid var(--primary-color);
+    border-radius: 15px;
+    background-color: rgba(17, 25, 40, 0.35);
+}
+
+.casino-group-title {
+    color: var(--text-color);
+    font-size: 16px;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 4px 16px;
+    border-radius: 10px;
+    background-color: var(--primary-color);
 }
 
 .minidash-content {

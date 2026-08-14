@@ -12,6 +12,9 @@ interface IRoseData {
   ltengames: number[];
   timeLastGame: number;
   status: string | boolean;
+  broker?: string;
+  casinoCode?: string;
+  casinoName?: string;
   rose: {
     cantidades: number[];
     porcentajes: number[];
@@ -45,6 +48,7 @@ export class CardRoulette {
   CantidadJugadas = signal<number>(0);
   timeAfterLastGame = signal<number>(-1);
   estado = signal<string | boolean>('');
+  casinoName = signal<string>('');
   appRoseData = signal<IRoseData>({
     mesa: 0,
     ltengames: [],
@@ -81,10 +85,15 @@ export class CardRoulette {
   InputAppRoseData = input<IRoseData>();
   showDetalles = input<boolean>(true);
   showStatus = input<boolean>(true);
-  detallesClick = output<number>();
+  showCasino = input<boolean>(false);
+  isLoading = input<boolean>(false);
+  detallesClick = output<{ mesa: number; casinoCode?: string }>();
 
   onDetalles() {
-    this.detallesClick.emit(this.appRoseData().mesa);
+    this.detallesClick.emit({
+      mesa: this.appRoseData().mesa,
+      casinoCode: this.appRoseData().casinoCode,
+    });
   }
 
   constructor() {
@@ -102,6 +111,7 @@ export class CardRoulette {
       this.appRoseData.set(data || { ...this.appRoseData() });
 
       this.estado.set(this.InputAppRoseData()!.status);
+      this.casinoName.set(this.InputAppRoseData()?.casinoName ?? '');
 
       this.mayorCantidad.set(this.calcularMayorCantidad(this.appRoseData().rose.cantidades));
 

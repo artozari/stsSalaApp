@@ -1,6 +1,14 @@
 <div class="content">
-    <ag-grid-angular class="aggrid" [theme]="theme" [pagination]="true" [rowData]="rowDataInput()" [columnDefs]="colDefs"
-        [gridOptions]="gridOptions" />
+    <div class="grid-container">
+        <ag-grid-angular class="aggrid" [theme]="theme" [pagination]="true" [rowData]="rowDataInput()"
+            [columnDefs]="colDefs" [gridOptions]="gridOptions" />
+        @if (isLoading()) {
+        <div class="grid-loading">
+            <div class="spinner"></div>
+            <span>Buscando...</span>
+        </div>
+        }
+    </div>
     <button (click)="exportToCsv()" class="export-btn">Exportar a CSV</button>
 </div>
     

@@ -1,6 +1,9 @@
 <div class="minidash-container">
+    @if (casinoTitle()) {
+    <div class="casino-group-title">{{ casinoTitle() }}</div>
+    }
     <div class="minidash-content">
-        @for (roseData of appRoseData(); track roseData.mesa) {
+        @for (roseData of appRoseData(); track roseData.broker + '-' + roseData.mesa) {
         <app-card-roulette [InputAppRoseData]="roseData"
             (detallesClick)="detallesClick.emit($event)"></app-card-roulette>
         }

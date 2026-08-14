@@ -4,11 +4,14 @@
     </header>
     <main>
         <div class="cards-formsearch-container">
-            <app-minidash [appRoseDataInput]="appsRosesDatas()" (detallesClick)="onDetallesMesa($event)"></app-minidash>
+            @for (grupo of minidashGrupos(); track grupo.broker) {
+            <app-minidash [appRoseDataInput]="grupo.mesas" [casinoTitle]="grupo.title"
+                (detallesClick)="onDetallesMesa($event)"></app-minidash>
+            }
         </div>
         <div class="cards-formsearch-container">
             <app-card-roulette [InputAppRoseData]="appRoseData()" [showDetalles]="false"
-                [showStatus]="false"></app-card-roulette>
+                [showStatus]="false" [showCasino]="true" [isLoading]="isSearching()"></app-card-roulette>
             <app-formsearch-main [mesasDisponibles]="mesasDisponibles()"
                 [casinosDisponibles]="casinosDisponibles()" [mesaSeleccionada]="mesaSeleccionada()"
                 (searchSubmitted)="onSearchSubmitted($event)"
@@ -16,12 +19,14 @@
         </div>
         <section class="last-winners" aria-live="polite">
         </section>
-        <app-table-realtime [rowDataInput]="tableData()"></app-table-realtime>
+        <app-table-realtime [rowDataInput]="tableData()" [mesas]="todasLasMesas()"
+            [casinos]="casinosDisponibles()" [isLoading]="isSearching()"></app-table-realtime>
         <div
             style=" display: flex; flex-direction: row; justify-content: center; align-items: center; flex-wrap: nowrap; gap: 20px; margin-top: 20px;">
             <app-tapete-totales [rowTotalsTapeteInput]="rowTotalsTapete()"></app-tapete-totales>
             <app-numerosganadores [rowNumerosGanadoresInput]="rowNumerosGanadores()"></app-numerosganadores>
         </div>
+        
         <app-switchdarktheme></app-switchdarktheme>
     </main>
     <footer>

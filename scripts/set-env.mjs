@@ -33,11 +33,30 @@ function parseEnvFile(path) {
 
 const env = parseEnvFile(ENV_FILE);
 
+const brokers = [];
+if (env.MQTT_URL) {
+  brokers.push({
+    url: env.MQTT_URL,
+    username: env.MQTT_USERNAME ?? '',
+    password: env.MQTT_PASSWORD ?? '',
+  });
+}
+for (let i = 2; i <= 10; i++) {
+  const url = env[`MQTT_URL_${i}`];
+  if (!url) continue;
+  brokers.push({
+    url,
+    username: env[`MQTT_USERNAME_${i}`] ?? env.MQTT_USERNAME ?? '',
+    password: env[`MQTT_PASSWORD_${i}`] ?? env.MQTT_PASSWORD ?? '',
+  });
+}
+
 const content = `/* AUTO-GENERATED from .env — do not edit manually. */
 export const environment = {
   mqttUrl: ${JSON.stringify(env.MQTT_URL ?? '')},
   mqttUsername: ${JSON.stringify(env.MQTT_USERNAME ?? '')},
   mqttPassword: ${JSON.stringify(env.MQTT_PASSWORD ?? '')},
+  mqttBrokers: ${JSON.stringify(brokers)},
   topicStatus: ${JSON.stringify(env.MQTT_TOPIC_STATUS ?? '')},
   topicGames: ${JSON.stringify(env.MQTT_TOPIC_GAMES ?? '')},
   topicStsMesas: ${JSON.stringify(env.MQTT_TOPIC_STS_MESAS ?? '')},

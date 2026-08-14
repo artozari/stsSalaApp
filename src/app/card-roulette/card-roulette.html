@@ -1,8 +1,19 @@
 <div class="cards">
     <div class="card">
         <div class="columnOfCard">
+            @if (showCasino() && casinoName()) {
+            <div class="card-casino-title">{{ casinoName() }}</div>
+            }
             <h3> {{ this.idTableSignal() | numeroMesaPipe }}</h3>
-            <app-rose [appRoseData]="appRoseData()" [tableID]="appRoseData().mesa"></app-rose>
+            <div class="rose-container">
+                <app-rose [appRoseData]="appRoseData()" [tableID]="appRoseData().mesa"></app-rose>
+                @if (isLoading()) {
+                <div class="card-loading">
+                    <div class="spinner"></div>
+                    <span>Buscando...</span>
+                </div>
+                }
+            </div>
             <app-vertical-bars-roulette [statName]="'Colo'" [statData]="this.varColors()">
             </app-vertical-bars-roulette>
         </div>

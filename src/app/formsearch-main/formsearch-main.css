@@ -10,14 +10,15 @@
 
 .busquedaManualContainer {
     width: 40dvw;
-    height: 165px;
+    height: auto;
+    min-height: 165px;
     color: var(--text-color);
     background-color: var(--secondary-color);
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    padding: 0px 20px;
+    padding: 20px;
     border-radius: 10px;
     gap: 10px;
 }

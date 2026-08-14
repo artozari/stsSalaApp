@@ -1,4 +1,4 @@
-import { Component, signal, ChangeDetectionStrategy, OnInit } from '@angular/core';
+import { Component, signal, computed, ChangeDetectionStrategy, OnInit } from '@angular/core';
 import { Header } from './header/header';
 import { TableRealtime } from './table-realtime/table-realtime';
 import { FormsearchMain } from './formsearch-main/formsearch-main';
@@ -43,6 +43,9 @@ interface IRoseData {
   ltengames: number[];
   timeLastGame: number;
   status: string | boolean;
+  broker?: string;
+  casinoCode?: string;
+  casinoName?: string;
   rose: {
     cantidades: number[];
     porcentajes: number[];
@@ -81,7 +84,7 @@ export class App implements OnInit {
   protected readonly title = signal('stsSalaApp');
   todasLasMesas = signal<{ value: number; table_number: number; fk_casino: number | null }[]>([]);
   mesasDisponibles = signal<{ value: number; label: string }[]>([]);
-  casinosDisponibles = signal<{ value: number; label: string }[]>([]);
+  casinosDisponibles = signal<{ value: number; label: string; casino_code?: string }[]>([]);
   casinoSeleccionado = signal<number | ''>('');
   tableData = signal<IRow[]>([]);
   rowTotalsTapete = signal<IRowTotals[]>([]);
@@ -90,11 +93,28 @@ export class App implements OnInit {
 
   appsRosesDatas = signal<IRoseData[]>([]);
 
+  minidashGrupos = computed(() => {
+    const groups = new Map<string, { broker: string; title: string; mesas: IRoseData[] }>();
+    for (const rose of this.appsRosesDatas()) {
+      const key = rose.broker ?? '';
+      if (!groups.has(key)) {
+        groups.set(key, {
+          broker: key,
+          title: rose.casinoName ?? rose.casinoCode ?? 'Sin casino',
+          mesas: [],
+        });
+      }
+      groups.get(key)!.mesas.push(rose);
+    }
+    return [...groups.values()];
+  });
+
   tableId = signal(0);
   mesaSeleccionada = signal<number>(0);
   mayorCantidad = signal<number>(-1);
   lastTenWinners = signal<number[]>([]);
   status = signal<string | boolean>('');
+  isSearching = signal(false);
 
   appRoseData = signal<IRoseData>({
     mesa: 0,
@@ -128,8 +148,14 @@ export class App implements OnInit {
     this.dashboardService.getAllDataDashboeard().subscribe((data: any) => {
       let datos = this.crearAppsRosesData(data);
       const currentData = this.appsRosesDatas();
-      const updatedData = currentData.filter((rose) => rose.mesa !== datos[0].mesa);
-      const newData = [...updatedData, ...datos].sort((a, b) => a.mesa - b.mesa);
+      const updatedData = currentData.filter(
+        (rose) => rose.mesa !== datos[0].mesa || rose.broker !== datos[0].broker,
+      );
+      const newData = [...updatedData, ...datos].sort((a, b) => {
+        const casinoA = a.casinoName ?? a.casinoCode ?? '';
+        const casinoB = b.casinoName ?? b.casinoCode ?? '';
+        return casinoA.localeCompare(casinoB) || a.mesa - b.mesa;
+      });
       this.appsRosesDatas.set(newData);
     });
   }
@@ -146,8 +172,10 @@ export class App implements OnInit {
         casinos.map((casino: any) => ({
           value: casino.id,
           label: casino.name || casino.casino_code || `Casino ${casino.id}`,
+          casino_code: casino.casino_code,
         })),
       );
+      this.aplicarFiltroCasino(this.casinoSeleccionado());
     } else {
       console.error('Error fetching casinos or invalid data format');
     }
@@ -170,11 +198,24 @@ export class App implements OnInit {
 
   private aplicarFiltroCasino(casinoId: number | '') {
     const id = casinoId === '' ? '' : Number(casinoId);
+    const casinoLabelMap = new Map<number, string>();
+    for (const casino of this.casinosDisponibles()) {
+      casinoLabelMap.set(casino.value, casino.label);
+    }
     const mesas = this.todasLasMesas().filter(
       (mesa) => !id || Number(mesa.fk_casino) === id,
     );
     this.mesasDisponibles.set(
-      mesas.map((mesa) => ({ value: mesa.value, label: `Mesa ${mesa.table_number}` })),
+      mesas.map((mesa) => {
+        const casinoLabel =
+          casinoId === '' && mesa.fk_casino != null
+            ? casinoLabelMap.get(mesa.fk_casino)
+            : undefined;
+        return {
+          value: mesa.value,
+          label: casinoLabel ? `Mesa ${mesa.table_number} - ${casinoLabel}` : `Mesa ${mesa.table_number}`,
+        };
+      }),
     );
   }
 
@@ -184,7 +225,13 @@ export class App implements OnInit {
     this.aplicarFiltroCasino(id);
   }
 
-  crearAppsRosesData(data: { mesa: string; payload: any }): Array<IRoseData> {
+  crearAppsRosesData(data: {
+    broker?: string;
+    mesa: string;
+    casinoCode?: string;
+    casinoName?: string;
+    payload: any;
+  }): Array<IRoseData> {
     const roseData: IRoseData[] = [];
 
     let mesa = data.payload.tableData[7];
@@ -201,7 +248,16 @@ export class App implements OnInit {
     let status = data.payload.status[1];
     let rose = obtenerPorsentajesDeNumerosIndividualesDesdeArray(data.payload.winningNumbersData);
 
-    roseData.push({ mesa, ltengames, timeLastGame, status, rose });
+    roseData.push({
+      mesa,
+      ltengames,
+      timeLastGame,
+      status,
+      rose,
+      broker: data.broker,
+      casinoCode: data.casinoCode,
+      casinoName: data.casinoName ?? data.casinoCode,
+    });
 
     return [...roseData];
   }
@@ -211,14 +267,24 @@ export class App implements OnInit {
     this.tableId.set(searchData.mesa!);
   }
 
-  onDetallesMesa(mesa: number) {
-    const mesaId = this.todasLasMesas().find((t) => t.table_number === mesa)?.value ?? mesa;
+  onDetallesMesa(data: { mesa: number; casinoCode?: string }) {
+    const casino = data.casinoCode
+      ? this.casinosDisponibles().find((c) => c.casino_code === data.casinoCode)
+      : undefined;
+    const mesaEncontrada = this.todasLasMesas().find(
+      (m) => m.table_number === data.mesa && (!casino || m.fk_casino === casino.value),
+    );
+    const mesaId = mesaEncontrada?.value ?? data.mesa;
     this.mesaSeleccionada.set(mesaId);
     this.tableId.set(mesaId);
     this.onSearchSubmitted({ mesa: mesaId });
   }
 
   private async performSearch(searchData: ISearchData) {
+    this.isSearching.set(true);
+    this.tableData.set([]);
+    this.rowTotalsTapete.set([]);
+    this.rowNumerosGanadores.set([]);
     try {
       const allData: IRow[] = [];
       const batchSize = 1000;
@@ -258,6 +324,8 @@ export class App implements OnInit {
       this.obtenerNumerosGanadores(allData);
     } catch (error) {
       console.error('Error al buscar datos:', error);
+    } finally {
+      this.isSearching.set(false);
     }
   }
   obtenerNumerosGanadores(allData: IRow[]) {
@@ -433,12 +501,24 @@ export class App implements OnInit {
   }
 
   private obtenerRose(data: IRow[]): void {
+    const mesaId = this.tableId();
+    const mesaInfo = this.todasLasMesas().find((m) => m.value === mesaId);
+    const casinoId =
+      mesaInfo && mesaInfo.fk_casino != null
+        ? mesaInfo.fk_casino
+        : !mesaId
+          ? this.casinoSeleccionado()
+          : undefined;
+    const casino = this.casinosDisponibles().find((c) => c.value === casinoId);
+    const esTodas = !mesaId;
+    const mesaNumero = mesaInfo?.table_number ?? (esTodas ? 0 : mesaId);
     this.appRoseData.set({
       timeLastGame: this.timeAfterLastGame(data),
       ltengames: this.lastTenWinners(),
       rose: obtenerPorsentajesDeNumerosIndividualesDesdeObjetos(data),
-      mesa: this.tableId(),
+      mesa: mesaNumero,
       status: this.status(),
+      casinoName: casino?.label ?? '',
     });
 
     if (this.appRoseData().rose.cantidades.some((value) => value !== 0)) {

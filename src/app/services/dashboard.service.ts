@@ -4,11 +4,33 @@ import { Observable } from 'rxjs';
 
 import { environment } from '../../environments/environment';
 
+export interface IDashboardMessage {
+  broker: string;
+  Mesa: string;
+  casinoCode: string;
+  casinoName: string;
+  payload: any;
+}
+
+function getCasinoName(casinoData: unknown): string | undefined {
+  if (!Array.isArray(casinoData)) {
+    return undefined;
+  }
+  for (let i = 0; i + 1 < casinoData.length; i += 2) {
+    if (String(casinoData[i]).toLowerCase() === 'name') {
+      return String(casinoData[i + 1]);
+    }
+  }
+  return undefined;
+}
+
 @Injectable({
   providedIn: 'root',
 })
 export class DashboardService {
   private client?: MqttClient;
+  private dashboardClients: { url: string; client: MqttClient }[] = [];
+  private dashboardClientUrls = new Set<string>();
   private subscribedTopics = new Set<string>();
   private currentTopic = environment.topicStatus;
   private currentTopicGames = environment.topicGames;
@@ -45,6 +67,48 @@ export class DashboardService {
     this.client.on('close', () => {
       console.log('mqtt connection closed');
     });
+  }
+
+  private createExtraDashboardClients() {
+    const brokers = environment.mqttBrokers ?? [];
+    for (const broker of brokers) {
+      if (!broker?.url) {
+        continue;
+      }
+      if (broker.url === environment.mqttUrl) {
+        continue;
+      }
+      if (this.dashboardClientUrls.has(broker.url)) {
+        continue;
+      }
+      this.dashboardClientUrls.add(broker.url);
+
+      const extra = mqtt.connect(broker.url, {
+        username: broker.username,
+        password: broker.password,
+      });
+
+      extra.on('connect', () => {
+        console.log('mqtt dashboard connected', broker.url);
+        extra.subscribe(this.topicStsMesas, { qos: 0 }, (err) => {
+          if (err) {
+            console.error('mqtt dashboard subscribe error', broker.url, err);
+          } else {
+            console.log('mqtt dashboard subscribed', broker.url, this.topicStsMesas);
+          }
+        });
+      });
+
+      extra.on('error', (err) => {
+        console.error('mqtt dashboard error', broker.url, err);
+      });
+
+      extra.on('close', () => {
+        console.log('mqtt dashboard closed', broker.url);
+      });
+
+      this.dashboardClients.push({ url: broker.url, client: extra });
+    }
   }
 
   private ensureSubscriptions() {
@@ -133,33 +197,49 @@ export class DashboardService {
     });
   }
 
-  public getAllDataDashboeard(): Observable<{}> {
+  public getAllDataDashboeard(): Observable<IDashboardMessage> {
     this.createClient();
+    this.createExtraDashboardClients();
     return new Observable((observer) => {
       const dashboardPrefix = environment.topicStsMesas.endsWith('#')
         ? environment.topicStsMesas.slice(0, -1)
         : environment.topicStsMesas;
 
-      const handleMessage = (topic: string, payload: Uint8Array) => {
-        if (topic.startsWith(dashboardPrefix)) {
-          const topicos = topic.split('/');
-          if (topicos.length >= 3) {
-            const lastSegment = topicos[topicos.length - 1];
-            try {
-              const payloadData = JSON.parse(payload.toString());
-              observer.next({ Mesa: lastSegment, payload: payloadData });
-            } catch (err) {
-              console.error('Error parsing MQTT message payload:', err);
-              observer.error(err);
-            }
+      const clients = [
+        { url: environment.mqttUrl, client: this.client },
+        ...this.dashboardClients,
+      ].filter((entry) => !!entry.client) as { url: string; client: MqttClient }[];
+
+      const makeHandleMessage = (broker: string) => {
+        return (topic: string, payload: Uint8Array) => {
+          if (!topic.startsWith(dashboardPrefix)) {
+            return;
           }
-        }
+          const topicos = topic.split('/');
+          if (topicos.length < 4) {
+            return;
+          }
+          const shortName = topicos[topicos.length - 1];
+          const casinoCode = topicos[3];
+          try {
+            const payloadData = JSON.parse(payload.toString());
+            const casinoName = getCasinoName(payloadData?.casinoData) ?? casinoCode;
+            observer.next({ broker, Mesa: shortName, casinoCode, casinoName, payload: payloadData });
+          } catch (err) {
+            console.error('Error parsing MQTT message payload:', err);
+            observer.error(err);
+          }
+        };
       };
 
-      this.client?.on('message', handleMessage);
+      const handlers = clients.map(({ url, client }) => {
+        const handle = makeHandleMessage(url);
+        client.on('message', handle);
+        return { client, handle };
+      });
 
       return () => {
-        this.client?.removeListener('message', handleMessage);
+        handlers.forEach(({ client, handle }) => client.removeListener('message', handle));
       };
     });
   }
@@ -172,5 +252,8 @@ export class DashboardService {
       this.client = undefined;
       this.subscribedTopics.clear();
     }
+    this.dashboardClients.forEach(({ client }) => client.end(true, () => {}));
+    this.dashboardClients = [];
+    this.dashboardClientUrls.clear();
   }
 }

@@ -6,6 +6,9 @@ interface IRoseData {
   ltengames: number[];
   timeLastGame: number;
   status: string | boolean;
+  broker?: string;
+  casinoCode?: string;
+  casinoName?: string;
   rose: {
     cantidades: number[];
     porcentajes: number[];
@@ -22,7 +25,8 @@ interface IRoseData {
 export class Minidash {
   appRoseDataInput = input<IRoseData[]>();
   computeDataInput = input<(number | string | boolean)[]>();
-  detallesClick = output<number>();
+  casinoTitle = input<string>('');
+  detallesClick = output<{ mesa: number; casinoCode?: string }>();
 
   appRoseData = signal<IRoseData[]>([
     {
