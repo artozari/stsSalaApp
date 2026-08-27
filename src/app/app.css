@@ -140,6 +140,10 @@ footer {
     align-items: center;
 }
 
+#search-section {
+    scroll-margin-top: 20px;
+}
+
 .rosa {
     margin: 15px;
     box-shadow: inset 0 0 10px var(--primary-color);

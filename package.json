@@ -4,7 +4,7 @@
   "scripts": {
     "ng": "ng",
     "start": "node scripts/set-env.mjs && ng serve",
-    "dev": "node scripts/set-env.mjs && ng serve --watch --host 10.0.0.216 --port=8080 --inspect --watch=true",
+    "dev": "node scripts/set-env.mjs && ng serve --watch",
     "dev:debug": "node scripts/set-env.mjs && ng serve --configuration=development --host 10.0.0.232 --port=8080 --inspect --watch=true",
     "buildProd": "node scripts/set-env.mjs && ng build --configuration production",
     "watch": "node scripts/set-env.mjs && ng build --watch --configuration development",

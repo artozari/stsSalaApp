@@ -40,6 +40,7 @@ export class FormsearchMain {
   mesasDisponibles = input([{ value: 0, label: 'Mesa 0' }]);
   casinosDisponibles = input<{ value: number; label: string }[]>([]);
   mesaSeleccionada = input<number>(0);
+  casinoSeleccionado = input<number | ''>('');
 
   constructor() {
     this.searchForm = this.fb.group({
@@ -48,6 +49,16 @@ export class FormsearchMain {
       fecha: [''],
       fechaFin: [''],
       tiempo: [30],
+    });
+
+    effect(() => {
+      const casino = this.casinoSeleccionado();
+      const currentCasino = this.searchForm.get('casino')?.value;
+      // Sincronizar select casino con el casino resuelto por Detalles
+      if (casino !== '' && casino != null && currentCasino !== casino) {
+        this.searchForm.get('casino')?.setValue(casino, { emitEvent: false });
+        this.cdr.markForCheck();
+      }
     });
 
     effect(() => {
@@ -61,6 +72,11 @@ export class FormsearchMain {
     effect(() => {
       const mesas = this.mesasDisponibles();
       const current = this.searchForm.get('mesa')?.value;
+      const mesaSel = this.mesaSeleccionada();
+      // No limpiar si el valor actual es el que viene de Detalles y aún no se actualizó la lista
+      if (current && current === mesaSel) {
+        return;
+      }
       if (current && !mesas.some((mesa) => mesa?.value === current)) {
         this.searchForm.get('mesa')?.setValue('');
         this.cdr.markForCheck();

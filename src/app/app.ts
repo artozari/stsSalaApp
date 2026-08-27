@@ -149,7 +149,10 @@ export class App implements OnInit {
       let datos = this.crearAppsRosesData(data);
       const currentData = this.appsRosesDatas();
       const updatedData = currentData.filter(
-        (rose) => rose.mesa !== datos[0].mesa || rose.broker !== datos[0].broker,
+        (rose) =>
+          rose.mesa !== datos[0].mesa ||
+          rose.broker !== datos[0].broker ||
+          rose.casinoCode !== datos[0].casinoCode,
       );
       const newData = [...updatedData, ...datos].sort((a, b) => {
         const casinoA = a.casinoName ?? a.casinoCode ?? '';
@@ -268,16 +271,56 @@ export class App implements OnInit {
   }
 
   onDetallesMesa(data: { mesa: number; casinoCode?: string }) {
-    const casino = data.casinoCode
-      ? this.casinosDisponibles().find((c) => c.casino_code === data.casinoCode)
+    const normalizedCode = data.casinoCode?.trim().toLowerCase();
+    const casino = normalizedCode
+      ? this.casinosDisponibles().find(
+          (c) => c.casino_code?.trim().toLowerCase() === normalizedCode,
+        )
       : undefined;
+
+    if (data.casinoCode && !casino) {
+      console.warn(
+        `[onDetallesMesa] casinoCode "${data.casinoCode}" no encontrado en casinosDisponibles`,
+        this.casinosDisponibles(),
+      );
+      return;
+    }
+
     const mesaEncontrada = this.todasLasMesas().find(
-      (m) => m.table_number === data.mesa && (!casino || m.fk_casino === casino.value),
+      (m) => Number(m.table_number) === Number(data.mesa) && (!!casino ? m.fk_casino === casino.value : true),
     );
-    const mesaId = mesaEncontrada?.value ?? data.mesa;
+
+    // Si hay casino, exigir match exacto casino+numero; si no, no usar fallback a table_number como fk_table
+    const mesaEstricta = casino
+      ? this.todasLasMesas().find(
+          (m) => Number(m.table_number) === Number(data.mesa) && m.fk_casino === casino.value,
+        )
+      : mesaEncontrada;
+
+    if (!mesaEstricta) {
+      console.warn(
+        `[onDetallesMesa] mesa ${data.mesa} casinoCode=${data.casinoCode} no encontrada en todasLasMesas`,
+        this.todasLasMesas(),
+      );
+      return;
+    }
+
+    const mesaId = mesaEstricta.value;
+
+    // Sincronizar filtro de casino ANTES de setear mesa para que mesasDisponibles contenga la mesa
+    if (casino) {
+      this.casinoSeleccionado.set(casino.value);
+      this.aplicarFiltroCasino(casino.value);
+    }
+
     this.mesaSeleccionada.set(mesaId);
     this.tableId.set(mesaId);
     this.onSearchSubmitted({ mesa: mesaId });
+
+    // Scroll suave hasta el form/resultados
+    setTimeout(() => {
+      document.getElementById('search-section')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 100);
   }
 
   private async performSearch(searchData: ISearchData) {

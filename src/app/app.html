@@ -9,11 +9,12 @@
                 (detallesClick)="onDetallesMesa($event)"></app-minidash>
             }
         </div>
-        <div class="cards-formsearch-container">
+        <div id="search-section" class="cards-formsearch-container">
             <app-card-roulette [InputAppRoseData]="appRoseData()" [showDetalles]="false"
                 [showStatus]="false" [showCasino]="true" [isLoading]="isSearching()"></app-card-roulette>
             <app-formsearch-main [mesasDisponibles]="mesasDisponibles()"
                 [casinosDisponibles]="casinosDisponibles()" [mesaSeleccionada]="mesaSeleccionada()"
+                [casinoSeleccionado]="casinoSeleccionado()"
                 (searchSubmitted)="onSearchSubmitted($event)"
                 (casinoChange)="onCasinoChange($event)"></app-formsearch-main>
         </div>
